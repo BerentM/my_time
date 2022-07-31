@@ -6,4 +6,7 @@
 build/
 
 # VS Code
-.vscode
+.vscode/
+
+# Output files
+bin/my_time.exe
