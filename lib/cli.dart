@@ -12,6 +12,7 @@ my_time.exe add today's task
 If you want to display current month tasks
 my_time.exe show
 ${'=' * 59} """);
+
   runner.addCommand(AddCommand());
   runner.addCommand(ShowCommand());
 
@@ -31,17 +32,29 @@ class AddCommand extends Command {
   final description = "Add new row to CSV file.";
 
   AddCommand() {
+    argParser.addSeparator("message${' ' * 7}What have you been doing?");
     argParser.addOption(
       "path",
       abbr: "p",
       help: "CSV file path.",
       defaultsTo: "${"${today.month}".padLeft(2, "0")}${today.year}.csv",
     );
+    argParser.addOption("date",
+        abbr: "d",
+        help: "Provide valid date [YYYY-MM-DD].",
+        defaultsTo:
+            "${today.year}-${"${today.month}".padLeft(2, "0")}-${"${today.day}".padLeft(2, "0")}");
+    argParser.addOption(
+      "time",
+      abbr: "t",
+      help: "How many hours have you worked?",
+      defaultsTo: "8",
+    );
   }
 
   @override
   void run() {
-    print(argResults?.arguments);
+    print(argResults?.rest);
   }
 }
 
@@ -61,6 +74,16 @@ class ShowCommand extends Command {
       help: "CSV file path.",
       defaultsTo: "${"${today.month}".padLeft(2, "0")}${today.year}.csv",
     );
+    argParser.addFlag(
+      "time",
+      abbr: "t",
+      help: "Show time summary.",
+    );
+    argParser.addFlag(
+      "all",
+      abbr: "a",
+      help: "Show whole file.",
+    );
   }
 
   @override
@@ -68,6 +91,3 @@ class ShowCommand extends Command {
     print(argResults?.arguments);
   }
 }
-
-//   runner.argParser.addSeparator("""
-// """);
