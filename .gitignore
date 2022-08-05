@@ -10,3 +10,4 @@ build/
 
 # Output files
 bin/my_time.exe
+*.csv
