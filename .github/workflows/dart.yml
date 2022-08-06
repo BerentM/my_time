@@ -45,18 +45,18 @@ jobs:
       matrix:
         include:
           - runs-on: ubuntu-latest
-            binary-name: mycli_linux_amd64
+            binary-name: my_time_linux_amd64
           - runs-on: macos-latest
-            binary-name: mycli_macos_amd64
+            binary-name: my_time_macos_amd64
           - runs-on: windows-latest
-            binary-name: mycli_windows.exe
+            binary-name: my_time_windows.exe
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
       - run: dart pub get
       - run: mkdir ${{ matrix.runs-on }}
-      - run: dart compile exe bin/mycli.dart -o ${{ matrix.runs-on }}/${{ matrix.binary-name }}
+      - run: dart compile exe bin/my_time.dart -o ${{ matrix.runs-on }}/${{ matrix.binary-name }}
       - uses: actions/upload-artifact@v2
         with:
           name: bin-${{ matrix.runs-on }}
