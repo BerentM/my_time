@@ -34,18 +34,20 @@ class AddCommand extends Command {
   final description = "Add new row to CSV file.";
 
   AddCommand() {
+    var formattedMonth = "${today.month}".padLeft(2, "0");
+    var formattedDay = "${today.day}".padLeft(2, "0");
+
     argParser.addSeparator("message${' ' * 7}What have you been doing?");
     argParser.addOption(
       "path",
       abbr: "p",
       help: "CSV file path.",
-      defaultsTo: "${"${today.month}".padLeft(2, "0")}${today.year}.csv",
+      defaultsTo: "$formattedMonth${today.year}.csv",
     );
     argParser.addOption("date",
         abbr: "d",
         help: "Provide valid date [YYYY-MM-DD].",
-        defaultsTo:
-            "${today.year}-${"${today.month}".padLeft(2, "0")}-${"${today.day}".padLeft(2, "0")}");
+        defaultsTo: "${today.year}-$formattedMonth-$formattedDay");
     argParser.addOption(
       "time",
       abbr: "t",
@@ -58,7 +60,6 @@ class AddCommand extends Command {
   void run() async {
     var path = argResults?["path"];
     if (path != null) {
-      // TODO: add argument type checks, time needs to be numeric type
       final newRow = [
         argResults?["date"],
         argResults?["time"],
@@ -94,11 +95,13 @@ class ShowCommand extends Command {
   final description = "Show CSV file contents.";
 
   ShowCommand() {
+    var formattedMonth = "${today.month}".padLeft(2, "0");
+
     argParser.addOption(
       "path",
       abbr: "p",
       help: "CSV file path.",
-      defaultsTo: "${"${today.month}".padLeft(2, "0")}${today.year}.csv",
+      defaultsTo: "$formattedMonth${today.year}.csv",
     );
     argParser.addOption(
       "earnings",
