@@ -136,3 +136,36 @@ void parseShow(ArgResults res) async {
     parseNonVerboseEarnings(res, contents);
   }
 }
+
+List<String> prepareFileContents(ArgResults res, List<String> currentContents) {
+  final newRow = [
+    res["date"],
+    res["time"],
+    res.rest.join(" "),
+  ].join(";");
+
+  var i = 0;
+  while (i < currentContents.length) {
+    if (currentContents[i].split(";")[0] == res["date"]) {
+      break;
+    }
+    i++;
+  }
+
+  // because of brake in while loop new row will be added if loop exists faster
+  i < currentContents.length
+      ? currentContents[i] = newRow
+      : currentContents.add(newRow);
+
+  currentContents.sort();
+
+  return currentContents;
+}
+
+void parseAdd(ArgResults res) async {
+  final path = res["path"];
+  // blindly creating file - it will leave it untouched if file exists
+  File(path).createSync();
+  var contents = prepareFileContents(res, await File(path).readAsLines());
+  await File(path).writeAsString(contents.join("\n"));
+}

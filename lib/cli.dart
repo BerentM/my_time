@@ -60,27 +60,7 @@ class AddCommand extends Command {
   void run() async {
     var path = argResults?["path"];
     if (path != null) {
-      final newRow = [
-        argResults?["date"],
-        argResults?["time"],
-        argResults?.rest.join(" "),
-      ].join(";");
-      // blindly creating file - it will leave it untouched if file exists
-      File(path).createSync();
-
-      final contents = await File(path).readAsLines();
-      var i = 0;
-      while (i < contents.length) {
-        if (contents[i].split(";")[0] == argResults?["date"]) {
-          break;
-        }
-        i++;
-      }
-
-      // because of brake in while loop new row will be added if loop exists faster
-      i < contents.length ? contents[i] = newRow : contents.add(newRow);
-      contents.sort();
-      await File(path).writeAsString(contents.join("\n"));
+      parseAdd(argResults!);
     }
   }
 }
