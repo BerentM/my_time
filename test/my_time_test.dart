@@ -1,8 +1,8 @@
-import 'package:my_time/my_time.dart';
-import 'package:test/test.dart';
+// import 'package:my_time/my_time.dart';
+// import 'package:test/test.dart';
 
-void main() {
-  test('calculate', () {
-    expect(calculate(), 42);
-  });
-}
+// void main() {
+  // test('calculate', () {
+  //   expect(calculate(), 42);
+  // });
+// }
