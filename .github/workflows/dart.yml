@@ -48,9 +48,6 @@ jobs:
       - name: Run tests
         run: dart test
 
-      - uses: actions/checkout@v2
-      - uses: dart-lang/setup-dart@v1
-      - run: dart pub get
       - run: mkdir ${{ matrix.runs-on }}
       - run: dart compile exe bin/my_time.dart -o ${{ matrix.runs-on }}/${{ matrix.binary-name }}
       - uses: actions/upload-artifact@v2
