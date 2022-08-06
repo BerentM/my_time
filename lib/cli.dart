@@ -60,7 +60,7 @@ class AddCommand extends Command {
       final newRow = [
         argResults?["date"],
         argResults?["time"],
-        argResults?.rest.join(),
+        argResults?.rest.join(" "),
       ].join(";");
       // blindly creating file - it will leave it untouched if file exists
       File(path).createSync();
