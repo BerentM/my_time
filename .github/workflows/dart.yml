@@ -10,8 +10,17 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  compile:
+    strategy:
+      matrix:
+        include:
+          - runs-on: ubuntu-latest
+            binary-name: my_time_linux_amd64
+          - runs-on: macos-latest
+            binary-name: my_time_macos_amd64
+          - runs-on: windows-latest
+            binary-name: my_time_windows.exe
+    runs-on: ${{ matrix.runs-on }}
 
     steps:
       - uses: actions/checkout@v3
@@ -36,22 +45,9 @@ jobs:
       # Your project will need to have tests in test/ and a dependency on
       # package:test for this step to succeed. Note that Flutter projects will
       # want to change this to 'flutter test'.
-      # - name: Run tests
-      #   run: dart test
+      - name: Run tests
+        run: dart test
 
-  compile:
-    name: dart compile exe
-    strategy:
-      matrix:
-        include:
-          - runs-on: ubuntu-latest
-            binary-name: my_time_linux_amd64
-          - runs-on: macos-latest
-            binary-name: my_time_macos_amd64
-          - runs-on: windows-latest
-            binary-name: my_time_windows.exe
-    runs-on: ${{ matrix.runs-on }}
-    steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
       - run: dart pub get
