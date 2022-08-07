@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:my_time/cli.dart';
 
 Future<List<String>> readFile(String path) async {
   final contents = await File(path).readAsLines();
@@ -9,16 +10,10 @@ Future<List<String>> readFile(String path) async {
 }
 
 void parseAllFlag(ArgResults res, List<String> contents) {
-  if (res["verbose"] == true) {
-    stdout.writeln("Day\t\tHours\tDescription");
-    for (var line in contents) {
-      var lineList = line.split(";");
-      stdout.writeln(lineList.join("\t"));
-    }
-  } else {
-    for (var line in contents) {
-      stdout.writeln(line);
-    }
+  stdout.writeln("Day\t\tHours\tDescription");
+  for (var line in contents) {
+    var lineList = line.split(";");
+    stdout.writeln(lineList.join("\t"));
   }
 }
 
@@ -129,7 +124,7 @@ void parseShow(ArgResults res) async {
   if (res["time"] == true) {
     parseTimeFlag(res, contents);
   }
-  if (res["all"] == true) {
+  if ((res["all"] == true) | (res.arguments.isEmpty)) {
     parseAllFlag(res, contents);
   }
   if ((res["verbose"] == false) & (res["earnings"] != null)) {
@@ -137,7 +132,7 @@ void parseShow(ArgResults res) async {
   }
 }
 
-List<String> prepareFileContents(ArgResults res, List<String> currentContents) {
+List<String>? prepareFileContents(ArgResults res, List<String> currentContents) {
   final newRow = [
     res["date"],
     res["time"],
@@ -153,9 +148,20 @@ List<String> prepareFileContents(ArgResults res, List<String> currentContents) {
   }
 
   // because of brake in while loop new row will be added if loop exists faster
-  i < currentContents.length
-      ? currentContents[i] = newRow
-      : currentContents.add(newRow);
+  if (i < currentContents.length) {
+    // TODO: think about changing  output depending on action
+    // maybe return info about what has been changed
+    if (currentContents[i] != newRow) {
+      currentContents[i] = newRow;
+      stdout.writeln("Row has been updated.");
+    } else {
+      stdout.writeln("File didn't change. You provided the same data.");
+      return null;
+    }
+  } else {
+    stdout.writeln("New row has been added.");
+    currentContents.add(newRow);
+  }
 
   currentContents.sort();
 
@@ -163,9 +169,15 @@ List<String> prepareFileContents(ArgResults res, List<String> currentContents) {
 }
 
 void parseAdd(ArgResults res) async {
+  if (res.rest.isEmpty) {
+    stderr.writeln("You need to pass message!");
+    exit(64);
+  }
   final path = res["path"];
   // blindly creating file - it will leave it untouched if file exists
   File(path).createSync();
   var contents = prepareFileContents(res, await File(path).readAsLines());
-  await File(path).writeAsString(contents.join("\n"));
+  if (contents != null){
+    await File(path).writeAsString(contents.join("\n"));
+  }
 }
