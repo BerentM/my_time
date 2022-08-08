@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:my_time/cli.dart';
 
 Future<List<String>> readFile(String path) async {
   final contents = await File(path).readAsLines();
@@ -17,9 +16,17 @@ void parseAllFlag(ArgResults res, List<String> contents) {
   }
 }
 
-String calculateEarnings(double hours, String hourlyWage) {
+dynamic calculateEarnings(double hours, double hourlyWage,
+    {bool stringify = false}) {
   // 0.88 because of PPE tax
-  return ((hours * double.parse(hourlyWage)) * 0.88).toStringAsFixed(2);
+  if (hours <= 0) {
+    throw ArgumentError("value need to be higher than 0", "hours");
+  }
+  if (hourlyWage <= 0) {
+    throw ArgumentError("value need to be higher than 0", "hourlyWage");
+  }
+  final earnings = (hours * hourlyWage) * 0.88;
+  return stringify ? (earnings).toStringAsFixed(2) : earnings;
 }
 
 void parseNonVerboseEarnings(ArgResults res, List<String> contents) {
@@ -27,7 +34,7 @@ void parseNonVerboseEarnings(ArgResults res, List<String> contents) {
   for (var line in contents) {
     timeSum += double.parse(line.split(";")[1]);
   }
-  stdout.writeln(calculateEarnings(timeSum, res["earnings"]));
+  stdout.writeln(calculateEarnings(timeSum, double.parse(res["earnings"])));
 }
 
 int countWorkingDays(DateTime start, DateTime end) {
@@ -93,7 +100,7 @@ void timeOutputGeneration(
   );
   if (res["earnings"] != null) {
     stdout
-        .writeln("Earned:\t${calculateEarnings(timeSum, res['earnings'])} PLN");
+        .writeln("Earned:\t${calculateEarnings(timeSum, double.parse(res['earnings']))} PLN");
   }
   final meanTime = timeSum / contents.length;
   stdout.writeln(
@@ -132,7 +139,8 @@ void parseShow(ArgResults res) async {
   }
 }
 
-List<String>? prepareFileContents(ArgResults res, List<String> currentContents) {
+List<String>? prepareFileContents(
+    ArgResults res, List<String> currentContents) {
   final newRow = [
     res["date"],
     res["time"],
@@ -177,7 +185,7 @@ void parseAdd(ArgResults res) async {
   // blindly creating file - it will leave it untouched if file exists
   File(path).createSync();
   var contents = prepareFileContents(res, await File(path).readAsLines());
-  if (contents != null){
+  if (contents != null) {
     await File(path).writeAsString(contents.join("\n"));
   }
 }

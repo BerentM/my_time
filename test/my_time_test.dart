@@ -26,4 +26,11 @@ void main() {
       44,
     );
   });
+  test('calculateEarnings', () {
+    expect(calculateEarnings(100, 10, stringify: true), "880.00");
+    expect(calculateEarnings(100, 10), 880.00);
+    expect(calculateEarnings(837652875, 238), 175438018140.00);
+    expect(() => calculateEarnings(100, 0), throwsA(isA<ArgumentError>()));
+    expect(() => calculateEarnings(0, 0), throwsA(isA<ArgumentError>()));
+  });
 }
